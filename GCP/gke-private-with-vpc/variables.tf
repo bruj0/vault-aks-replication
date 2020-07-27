@@ -5,7 +5,7 @@ variable "project_id" {
 
 variable "cluster_name_suffix" {
   description = "A suffix to append to the default cluster name"
-  default     = "vault01"
+  default     = "vault"
 }
 
 variable "region" {
@@ -15,20 +15,20 @@ variable "region" {
 
 variable "network" {
   description = "The VPC network to host the cluster in"
-  default     = "gke"
+  default     = "gke01"
 }
 
 variable "subnetwork" {
   description = "The subnetwork to host the cluster in"
-  default     = "vault-01"
+  default     = "gke-01"
 }
 
-variable "ip_range_pods" {
+variable "ip_range_pods_name" {
   description = "The secondary ip range to use for pods"
   default     = "pods"
 }
 
-variable "ip_range_services" {
+variable "ip_range_services_name" {
   description = "The secondary ip range to use for services"
   default     = "services"
 }

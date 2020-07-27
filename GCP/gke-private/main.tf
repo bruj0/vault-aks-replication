@@ -17,20 +17,24 @@ module "gke" {
   source                    = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   version                   = "v10.0.0"
   project_id                = var.project_id
-  name                      = "${local.cluster_type}-${var.cluster_name_suffix}"
+  name                      = "${local.cluster_type}-cluster${var.cluster_name_suffix}"
   regional                  = true
   region                    = var.region
   network                   = var.network
   subnetwork                = var.subnetwork
   ip_range_pods             = var.ip_range_pods
   ip_range_services         = var.ip_range_services
-  create_service_account    = true
+  create_service_account    = false
   service_account           = var.compute_engine_service_account
-  enable_private_endpoint   = true
+  enable_private_endpoint   = false
   enable_private_nodes      = true
   master_ipv4_cidr_block    = "172.16.0.0/28"
   default_max_pods_per_node = 20
   remove_default_node_pool  = true
+  #The final count will be this value * zones
+  initial_node_count = 0
+  #Needed for Vault pod injector
+  #firewall_inbound_ports = ["8080"]
 
   node_pools = [
     {
@@ -47,8 +51,9 @@ module "gke" {
       service_account    = var.compute_engine_service_account
       preemptible        = true
       max_pods_per_node  = 100
-      initial_node_count = 3
+      initial_node_count = 1
     },
+
   ]
 
   master_authorized_networks = [
@@ -56,8 +61,18 @@ module "gke" {
       cidr_block   = data.google_compute_subnetwork.subnetwork.ip_cidr_range
       display_name = "VPC"
     },
+    {
+      cidr_block   = "77.163.156.16/32",
+      display_name = "bastion"
+    }
   ]
 }
 
 data "google_client_config" "default" {
+}
+
+timeouts {
+  create = "10m"
+  delete = "10m"
+  update = "10m"
 }
