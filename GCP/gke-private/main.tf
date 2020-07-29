@@ -70,9 +70,3 @@ module "gke" {
 
 data "google_client_config" "default" {
 }
-
-timeouts {
-  create = "10m"
-  delete = "10m"
-  update = "10m"
-}
